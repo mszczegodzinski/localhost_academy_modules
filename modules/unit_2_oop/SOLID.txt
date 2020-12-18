@@ -1,0 +1,10 @@
+S - single responsibility principle
+każda funkcja / klasa odpowiada za jedną czynność
+O — Open closed principle
+piszemy kod w taki sposób, aby dodawane nowe funkcjonalności nie psuły poprzednich oraz aby nie trzeba było modyfikować wczesniej napisanego kodu. Przykład: zamiast jednej funkcji, która oblicza wszystkie pola / obwody, taka która oblicza pojedynczo dla każdej z nich
+L — Liskov substitution principle
+? - kod metod/klas podklas powinien nadpisywać kod klasy rodzica tak, aby nie psuć funkcjonalności klasy rodzica, podklas.
+I — Interface segregation principle
+interfejsy należy grupować tak, aby nie wymuszać niepotrzebnej implementacji metod w danym obiekcie. Np. do płaskiej figury nie potrzebujemy implementacji np. calculateVolume, która nie zostanie nigdy wykorzystana.
+D — Dependency Inversion principle
+wysokopoziomowe klasy nie powinny zależeć od niskopoziomowych szczegółów. Można logikę wyprowadzić do innych klas i te klasy ustawić jako property w klasie wysokopoziomowej
