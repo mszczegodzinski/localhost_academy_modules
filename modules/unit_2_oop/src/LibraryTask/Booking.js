@@ -25,23 +25,28 @@ class Booking {
     this.borrowedBooks = [];
   }
 
-  // borrowBook(books, user) {
   borrowBooks(books) {
     libraryHelpers.validateSpecificInstanceInArray(books, Book);
-    // libraryHelpers.validateSpecificInstance(user, LibraryUser);
-    // manipulowac na this.books czy robic kopie i zwracac?
     books.forEach((book) => {
+      const result = this.borrowedBooks.filter(
+        (currentBook) => currentBook.id === book.id
+      );
+      if (!result.length) {
+        throw new Error('You cannot borrow book which is already borrowed');
+      }
       this.borrowedBooks.push(book);
     });
   }
 
   returnBooks(books) {
     libraryHelpers.validateSpecificInstanceInArray(books, Book);
-
     books.forEach((book) => {
       const result = this.borrowedBooks.filter(
         (currentBook) => currentBook.id !== book.id
       );
+      if (!result.length) {
+        throw new Error('No book to remove found');
+      }
       this.borrowedBooks = result;
     });
   }

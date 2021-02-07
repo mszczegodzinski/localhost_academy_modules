@@ -14,7 +14,6 @@ class Book {
     this.author = author;
     this.image = libraryHelpers.generateRandomImagePath();
     this.shortDescription = shortDescription;
-    this.isBorrowed = false;
   }
 }
 

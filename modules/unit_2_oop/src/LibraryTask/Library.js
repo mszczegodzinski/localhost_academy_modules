@@ -14,13 +14,11 @@ class Library {
   constructor() {
     this.books = [];
     this.bookings = [];
-    // niepotrzebne z powodu isBorrowed w Book?
-    // this.borrowedBooks = [];
+    this.borrowedBooks = [];
   }
 
   addBooks(books) {
     libraryHelpers.validateSpecificInstanceInArray(books, Book);
-    // czy kopiowac tablice do zmiennej czy modyfikowac bezposrednio?
     books.forEach((book) => {
       this.books.push(book);
     });
@@ -28,17 +26,24 @@ class Library {
 
   removeBooks(books) {
     libraryHelpers.validateSpecificInstanceInArray(books, Book);
-    const result = this.books.filter(
-      (currentBook) => currentBook.id !== book.id
-    );
-    if (!result.length) {
-      throw new Error('No book to remove found');
-    }
-    if (result.length && result[0].isBorrowed) {
-      throw new Error('You cannot remove a borrowed book');
-    }
-
-    this.books = result;
+    books.forEach((book) => {
+      const result = this.books.filter(
+        (currentBook) => currentBook.id !== book.id
+      );
+      if (!result.length) {
+        throw new Error('No book to remove found');
+      }
+      if (this.borrowedBooks.length) {
+        books.forEach((book) => {
+          this.borrowedBooks.forEach((borrowedBook) => {
+            if (borrowedBook.id === book.id) {
+              throw new Error('You cannot remove a borrowed book');
+            }
+          });
+        });
+      }
+      this.books = result;
+    });
   }
 
   createBooking(user, books) {
@@ -46,8 +51,12 @@ class Library {
     libraryHelpers.validateSpecificInstanceInArray(books, Book);
     const booking = new Booking(user);
     books.forEach((book) => {
-      if (book.isBorrowed) {
-        throw new Error('You cannot borrow book which is already borrowed');
+      if (this.borrowedBooks.length) {
+        this.borrowedBooks.forEach((borrowedBook) => {
+          if (borrowedBook.id === book.id) {
+            throw new Error('You cannot borrow book which is already borrowed');
+          }
+        });
       }
     });
     booking.borrowBook(books);
@@ -56,12 +65,22 @@ class Library {
 
   removeBooking(booking) {
     libraryHelpers.validateSpecificInstance(booking, Booking);
+    // check if were books to remove:
     const result = this.bookings.filter(
       (currentBooking) => currentBooking.id !== booking.id
     );
     if (!result.length) {
       throw new Error('No book to remove found');
     }
+    // remove books which are currently borrowed:
+    if (this.borrowedBooks.length) {
+      booking.borrowedBook.forEach((book, i) => {
+        if (currentBook.id === book.id) {
+          this.borrowedBook.splice(i, 1);
+        }
+      });
+    }
+
     this.bookings = result;
   }
 }

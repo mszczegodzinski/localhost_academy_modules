@@ -3,10 +3,10 @@ import userHelpers from './userHelpers';
 
 class UserApp {
   constructor(users) {
-    userHelpers.validateArray(users);
     userHelpers.validateSpecificInstanceInArray(users, User);
 
     this.users = users;
+    // this.logs, history
   }
 
   changeUserPassword(userToModify, modifierUser, password) {
@@ -14,10 +14,20 @@ class UserApp {
     userHelpers.validateSpecificInstance(modifierUser, User);
     userHelpers.validateUserAccess(userToModify, modifierUser);
     userHelpers.validatePassword(password);
+
+    const selectedIndex = this.users.findIndex(
+      (user) => user.id === userToModify.id
+    );
+
+    if (selectedIndex === -1) {
+      throw new Error('No user found');
+    }
+
+    this.users[selectedIndex].password = password;
+
     this.users.forEach((currentUser) => {
       if (currentUser.id === userToModify.id) {
         currentUser.password = password;
-        currentUser.modifiedBy = modifierUser.id;
       }
     });
   }
@@ -27,6 +37,7 @@ class UserApp {
     userHelpers.validateSpecificInstance(modifierUser, User);
     userHelpers.validateUserAccess(userToModify, modifierUser);
     userHelpers.validateEmail(email);
+
     this.users.forEach((currentUser) => {
       if (currentUser.id === userToModify.id) {
         currentUser.email = email;
@@ -46,8 +57,7 @@ const user1 = new User(
   'a#a3456B',
   'male',
   'jankowalski@gmail.com',
-  'regular',
-  null
+  'regular'
 );
 
 const user2 = new User(
@@ -58,8 +68,7 @@ const user2 = new User(
   'a#a3456B',
   'male',
   'jannowak@gmail.com',
-  'regular',
-  null
+  'regular'
 );
 
 const admin = new User(
@@ -70,8 +79,7 @@ const admin = new User(
   '1Dxa#a3456B',
   'female',
   'janadmin@gmail.com',
-  'admin',
-  null
+  'admin'
 );
 
 const userApp = new UserApp([user1, user2, admin]);

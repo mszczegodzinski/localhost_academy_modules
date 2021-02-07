@@ -1,5 +1,3 @@
-import emailUtils from './emailUtils';
-
 class Email {
   constructor(from, to, cc, bcc, title, html) {
     this.from = from;
