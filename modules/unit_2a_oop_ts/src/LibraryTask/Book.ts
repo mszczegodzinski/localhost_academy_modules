@@ -2,7 +2,14 @@ import { v4 as uuidv4 } from 'uuid';
 import libraryHelpers from './libraryHelpers';
 
 // Obiekt charakteryzujący książkę:
-class Book {
+interface IBook {
+	id: string;
+	image: string;
+	title: string;
+	author: string;
+	shortDescription: string;
+}
+class Book implements IBook {
 	// Ma miec: Tytuł, Autora, uuid, losowe zdjęcie oraz krótki opis
 	private readonly _id = uuidv4();
 	private readonly _image = libraryHelpers.generateRandomImagePath();
@@ -20,40 +27,40 @@ class Book {
 		this._shortDescription = _shortDescription;
 	}
 
-	get id() {
-		return this._id;
-	}
+	// get id() {
+	// 	return this._id;
+	// }
 
-	get image() {
-		return this._image;
-	}
+	// get image() {
+	// 	return this._image;
+	// }
 
-	get title() {
-		return this._title;
-	}
+	// get title() {
+	// 	return this._title;
+	// }
 
-	set title(title: string) {
-		libraryHelpers.validateSimpleString(title);
-		this._title = title;
-	}
+	// set title(title: string) {
+	// 	libraryHelpers.validateSimpleString(title);
+	// 	this._title = title;
+	// }
 
-	get author() {
-		return this._author;
-	}
+	// get author() {
+	// 	return this._author;
+	// }
 
-	set author(author: string) {
-		libraryHelpers.validateSimpleString(author);
-		this._author = author;
-	}
+	// set author(author: string) {
+	// 	libraryHelpers.validateSimpleString(author);
+	// 	this._author = author;
+	// }
 
-	get shortDescription() {
-		return this._shortDescription;
-	}
+	// get shortDescription() {
+	// 	return this._shortDescription;
+	// }
 
-	set shortDescription(shortDescription: string) {
-		libraryHelpers.validateSimpleString(shortDescription);
-		this._shortDescription = shortDescription;
-	}
+	// set shortDescription(shortDescription: string) {
+	// 	libraryHelpers.validateSimpleString(shortDescription);
+	// 	this._shortDescription = shortDescription;
+	// }
 }
 
 export default Book;

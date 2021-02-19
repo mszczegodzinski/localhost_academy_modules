@@ -3,7 +3,16 @@ import cartHelpers from './cartHelpers';
 import { Category } from './cartHelpers';
 // Stwórz strukturę danych związaną ze sklepem internetowym
 // Obiekt charakteryzujący przedmiot:
-class CartItem {
+
+interface ICartItem {
+	id: string;
+	name: string;
+	category: Category;
+	price: number;
+	discount: number;
+	quantity: number;
+}
+class CartItem implements ICartItem {
 	// Ma miec: Nazwę, Kategorię, Cenę, Rabat % na przedmiot, uuid
 	// Ma umożliwiać:
 	// - modyfikować cenę przedmiotu
@@ -30,50 +39,50 @@ class CartItem {
 		this._quantity = _quantity;
 	}
 
-	get name() {
-		return this._name;
-	}
+	// get name() {
+	// 	return this._name;
+	// }
 
-	set name(name: string) {
-		cartHelpers.validateSimpleString(name);
-		this._name = name;
-	}
+	// set name(name: string) {
+	// 	cartHelpers.validateSimpleString(name);
+	// 	this._name = name;
+	// }
 
-	get price() {
-		return this._price;
-	}
+	// get price() {
+	// 	return this._price;
+	// }
 
-	set price(price: number) {
-		cartHelpers.validatePrice(price);
-		this._price = price;
-	}
+	// set price(price: number) {
+	// 	cartHelpers.validatePrice(price);
+	// 	this._price = price;
+	// }
 
-	get category() {
-		return this._category;
-	}
+	// get category() {
+	// 	return this._category;
+	// }
 
-	set category(category: Category) {
-		cartHelpers.validateSimpleString(category);
-		this._category = category;
-	}
+	// set category(category: Category) {
+	// 	cartHelpers.validateSimpleString(category);
+	// 	this._category = category;
+	// }
 
-	get discount() {
-		return this._discount;
-	}
-	// integer 0-99
-	set discount(discount: number) {
-		cartHelpers.validateDiscount(discount);
-		this._discount = discount;
-	}
+	// get discount() {
+	// 	return this._discount;
+	// }
+	// // integer 0-99
+	// set discount(discount: number) {
+	// 	cartHelpers.validateDiscount(discount);
+	// 	this._discount = discount;
+	// }
 
-	get quantity() {
-		return this._quantity;
-	}
+	// get quantity() {
+	// 	return this._quantity;
+	// }
 
-	set quantity(quantity: number) {
-		cartHelpers.validateItemQuantity(quantity);
-		this._quantity = quantity;
-	}
+	// set quantity(quantity: number) {
+	// 	cartHelpers.validateItemQuantity(quantity);
+	// 	this._quantity = quantity;
+	// }
 }
 
 export default CartItem;

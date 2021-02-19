@@ -1,6 +1,7 @@
 import User from './User';
 import userHelpers from './userHelpers';
 
+// poprawiono nazwe z validate na checkUserAccess
 class UserApp {
 	constructor(private users: User[]) {
 		this.users = users;
@@ -8,7 +9,7 @@ class UserApp {
 	}
 
 	changeUserPassword(userToModify: User, modifierUser: User, password: string) {
-		userHelpers.validateUserAccess(userToModify, modifierUser);
+		userHelpers.checkUserAccess(userToModify, modifierUser);
 		userHelpers.validatePassword(password);
 
 		const selectedIndex = this.users.findIndex(
@@ -29,7 +30,7 @@ class UserApp {
 	}
 
 	changeUserEmail(userToModify: User, modifierUser: User, email: string) {
-		userHelpers.validateUserAccess(userToModify, modifierUser);
+		userHelpers.checkUserAccess(userToModify, modifierUser);
 		userHelpers.validateEmail(email);
 
 		this.users.forEach((currentUser) => {

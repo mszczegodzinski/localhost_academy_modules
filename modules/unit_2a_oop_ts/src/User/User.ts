@@ -6,84 +6,105 @@ import { Gender, UserType } from './userHelpers';
 // Stwórz strukturę danych związaną z użytkownikami
 // Obiekt charakteryzujący użytkownika:
 
-class User {
+interface IUser {
+	id: string;
+	name: string;
+	surname: string;
+	birthDate: string;
+	password: string;
+	gender: Gender;
+	email: string;
+	type: UserType;
+}
+
+// czy interfejs powinien byc przekazany
+
+class User implements IUser {
 	//     Ma mieć: Imię, Nazwisko, datę urodzenia, haslo, płeć, adres email, poziom dostepu = ""user""
 	//     Ma umożliwiać: zmianę email, zmianę hasła
-	private _birthDateResult: string;
+	private _birthDate: string; // ?
 	constructor(
-		private readonly _id: number,
+		private readonly id: number,
 		private _name: string,
 		private _surname: string,
-		private _birthDate: string,
+		private _birthDateParam: string,
 		private _password: string,
 		private _gender: Gender,
 		private _email: string,
 		private readonly _type: UserType
 	) {
-		userHelpers.validateSimpleString(_name);
-		userHelpers.validateSimpleString(_surname);
-		userHelpers.validateDate(_birthDate);
-		userHelpers.validatePassword(_password);
-		userHelpers.validateEmail(_email);
+		// userHelpers.validateSimpleString(_name);
+		// userHelpers.validateSimpleString(_surname);
+		// userHelpers.validateDate(_birthDateParam);
+		// userHelpers.validatePassword(_password);
+		// userHelpers.validateEmail(_email);
 
-		this._id = _id;
-		this._name = _name;
-		this._surname = _surname;
-		this._birthDateResult = moment(_birthDate).format('MM/DD/YYYY');
-		this._password = _password;
-		this._gender = _gender;
-		this._email = _email;
-		this._type = _type;
+		// this._id = _id;
+		// this._name = _name;
+		// this._surname = _surname;
+		// // nazwa do zmiany
+		// this._birthDate = moment(_birthDateParam).format('MM/DD/YYYY');
+		// this._password = _password;
+		// this._gender = _gender;
+		// this._email = _email;
+		// this._type = _type;
+		this.id = id;
+		name: string;
+		surname: string;
+		birthDate: string;
+		password: string;
+		gender: Gender;
+		email: string;
+		type: UserType;
 	}
 
-	// jakis generator do getteros i setterow?
-	get id() {
-		return this._id;
-	}
-	get name() {
-		return this._name;
-	}
-	set name(name: string) {
-		userHelpers.validateSimpleString(name);
-		this._name = name;
-	}
-	get surname() {
-		return this._surname;
-	}
-	set surname(surname: string) {
-		userHelpers.validateSimpleString(surname);
-		this._surname = surname;
-	}
-	get birthDateResult() {
-		return this._birthDateResult;
-	}
-	set birthDateResult(birthDate: string) {
-		userHelpers.validateDate(birthDate);
-		this._birthDateResult = moment(birthDate).format('MM/DD/YYYY');
-	}
-	get password() {
-		return this._password;
-	}
-	set password(password: string) {
-		userHelpers.validatePassword(password);
-		this._password = password;
-	}
-	get gender() {
-		return this._gender;
-	}
-	set gender(gender: Gender) {
-		this._gender = gender;
-	}
-	get email() {
-		return this._email;
-	}
-	set email(email: string) {
-		userHelpers.validateEmail(email);
-		this._email = email;
-	}
-	get type() {
-		return this._type;
-	}
+	// get id() {
+	// 	return this._id;
+	// }
+	// get name() {
+	// 	return this._name;
+	// }
+	// set name(name: string) {
+	// 	userHelpers.validateSimpleString(name);
+	// 	this._name = name;
+	// }
+	// get surname() {
+	// 	return this._surname;
+	// }
+	// set surname(surname: string) {
+	// 	userHelpers.validateSimpleString(surname);
+	// 	this._surname = surname;
+	// }
+	// get birthDateResult() {
+	// 	return this._birthDate;
+	// }
+	// set birthDateResult(birthDate: string) {
+	// 	userHelpers.validateDate(birthDate);
+	// 	this._birthDate = moment(birthDate).format('MM/DD/YYYY');
+	// }
+	// get password() {
+	// 	return this._password;
+	// }
+	// set password(password: string) {
+	// 	userHelpers.validatePassword(password);
+	// 	this._password = password;
+	// }
+	// get gender() {
+	// 	return this._gender;
+	// }
+	// set gender(gender: Gender) {
+	// 	this._gender = gender;
+	// }
+	// get email() {
+	// 	return this._email;
+	// }
+	// set email(email: string) {
+	// 	userHelpers.validateEmail(email);
+	// 	this._email = email;
+	// }
+	// get type() {
+	// 	return this._type;
+	// }
 	// set type? czy uzytkownik moze zmieniac typ czy wtedy powinien byc tworzony nowy z innym typem?
 }
 

@@ -10,6 +10,8 @@ import Email from './Email';
 import emailUtils from './emailUtils';
 
 class EmailBuilder {
+	private email: Email;
+
 	private _from!: string;
 	private _to!: string[];
 	private _title!: string;
@@ -27,6 +29,7 @@ class EmailBuilder {
 	}
 
 	setFrom(from: string) {
+		// tu ma byc zmienany email a nie email builder
 		emailUtils.validateEmail(from);
 		this._from = from;
 		return this;

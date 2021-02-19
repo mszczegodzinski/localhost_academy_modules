@@ -1,63 +1,72 @@
 import { v4 as uuidv4, validate } from 'uuid';
 import Contact from './Contact';
 import helpersFunc from './helpers';
+
+interface IGroup {
+	id: string;
+	name: string;
+	contactList: Contact[];
+}
+
 // Obiekt charakteryzujący grupę kontaktów:
-class Group {
-  // Ma mieć: listę kontaktów oraz nazwę grupy oraz uuid
-  // Ma umożliwiać: zmianę nazwy grupy, można dodać lub usunac kontakt z grupy, można sprawdzić czy kontakt istnieje w grupie
-  private readonly _id = uuidv4();
-  constructor(private _name: string, private _contactList: Contact[]) {
-    helpersFunc.validateSimpleString(_name);
-    this._name = _name;
-    this._contactList = _contactList;
-  }
+class Group implements IGroup {
+	// Ma mieć: listę kontaktów oraz nazwę grupy oraz uuid
+	// Ma umożliwiać: zmianę nazwy grupy, można dodać lub usunac kontakt z grupy, można sprawdzić czy kontakt istnieje w grupie
+	private readonly _id = uuidv4();
+	constructor(private _name: string, private _contactList: Contact[]) {
+		helpersFunc.validateSimpleString(_name);
+		this._name = _name;
+		this._contactList = _contactList;
+	}
 
-  get name() {
-    return this._name;
-  }
+	// get name() {
+	//   return this._name;
+	// }
 
-  set name(name: string) {
-    helpersFunc.validateSimpleString(name);
-    this._name = name;
-  }
+	// set name(name: string) {
+	//   helpersFunc.validateSimpleString(name);
+	//   this._name = name;
+	// }
 
-  removeContact(id: string): void {
-    this.validateId(id);
-    const result = this._contactList.filter((contact) => contact.id !== id);
-    helpersFunc.validateResult(result);
-    this._contactList = result;
-  }
+	// zmienic na parametr Contact
+	removeContact(id: string): void {
+		this.validateId(id);
+		const result = this._contactList.filter((contact) => contact.id !== id);
+		helpersFunc.validateResult(result);
+		this._contactList = result;
+	}
 
-  addContact(contact: Contact): void {
-    this._contactList.push(contact);
-  }
+	addContact(contact: Contact): void {
+		this._contactList.push(contact);
+	}
 
-  setName(name: string): void {
-    helpersFunc.validateSimpleString(name);
-    this._name = name;
-  }
+	// setName(name: string): void {
+	//   helpersFunc.validateSimpleString(name);
+	//   this._name = name;
+	// }
 
-  // czy nie powinno zwracac samego contact?
-  findContact(phrase: string): Contact[] {
-    const result = this._contactList.filter((contact) =>
-      contact.containsPhrase(phrase)
-    );
-    helpersFunc.validateResult(result);
-    return result;
-  }
+	// czy nie powinno zwracac samego contact?
+	findContact(phrase: string): Contact[] {
+		const result = this._contactList.filter((contact) =>
+			contact.containsPhrase(phrase)
+		);
+		helpersFunc.validateResult(result);
+		return result;
+	}
 
-  validateId(id: string): void {
-    if (!validate(id)) {
-      throw new Error('Incorrect ID');
-    }
-  }
+	// nazwa _
+	private validateId(id: string): void {
+		if (!validate(id)) {
+			throw new Error('Incorrect ID');
+		}
+	}
 }
 
 const contactList1 = [
-  new Contact('Jan', 'Kowalski', 'jankowalski@gmail.com'),
-  new Contact('Jan', 'Nowak', 'jannowak@gmail.com'),
-  new Contact('Marcin', 'Krol', 'marcinkrol@gmail.com'),
-  new Contact('Mateusz', 'Zimny', 'mateuszzimny@gmail.com'),
+	new Contact('Jan', 'Kowalski', 'jankowalski@gmail.com'),
+	new Contact('Jan', 'Nowak', 'jannowak@gmail.com'),
+	new Contact('Marcin', 'Krol', 'marcinkrol@gmail.com'),
+	new Contact('Mateusz', 'Zimny', 'mateuszzimny@gmail.com'),
 ];
 // const contactList2 = [1, 2, 3, 4];
 const group1 = new Group('Group 1', contactList1);

@@ -12,17 +12,20 @@ class Cart {
 	// - podliczać wartość koszyka uwzględniajac rabaty
 	// walidacja do poprawy
 	private readonly _id = uuidv4();
-	private _total = this.calculateTotalPrice();
+	private _total = 0;
+	
 	constructor(private _items: CartItem[], private _discount: number, private _discountCode: string) {
 		cartHelpers.validateDiscount(_discount);
 		cartHelpers.validateSimpleString(_discountCode);
 
 		this._items = _items;
 		this._discount = _discount;
-		this._discountCode = _discountCode;		
+		this._discountCode = _discountCode;	
+		this._total = this.calculateTotalPrice();	
 	}
 
 	addItem(item: CartItem) {
+		// brak logiki mergowania takich samyhc produktów
 		this._items.push(item);
 	}
 
@@ -42,6 +45,7 @@ class Cart {
 		if(!searchedItem) {
 			throw new Error('No item found');
 		}
+		// tutaj wygodniej bedzie uzyc find i szukanie zmienic na po ID
 		this._items.forEach(currentItem => {
 			if(currentItem.name === item.name){
 				currentItem.quantity = quantity;
@@ -57,6 +61,7 @@ class Cart {
 	setDiscountCode(discountCode: string): void {
 		cartHelpers.validateSimpleString(discountCode);
 		this._discountCode = discountCode;
+		// setDiscount do skasowania i na podstawie discount code powinien zmieniac sie discount
 	}
 
 	// try change using reduce method:

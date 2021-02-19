@@ -57,7 +57,7 @@ const validateUserType = (inputData: string) => {
 	}
 };
 
-const validateUserAccess = (userToModify: User, modifierUser: User) => {
+const checkUserAccess = (userToModify: User, modifierUser: User) => {
 	validateUserType(userToModify.type);
 	validateUserType(modifierUser.type);
 	if (userToModify.id !== modifierUser.id && modifierUser.type !== 'admin') {
@@ -73,7 +73,7 @@ const libraryHelpers = {
 	validateEmail,
 	validatePassword,
 	validateSimpleString,
-	validateUserAccess,
+	checkUserAccess,
 	validateUserType,
 };
 

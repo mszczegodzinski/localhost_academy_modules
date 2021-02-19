@@ -3,8 +3,17 @@ import Book from './Book';
 import LibraryUser from './LibraryUser';
 import { v4 as uuidv4 } from 'uuid';
 
+interface IBooking {
+	id: string;
+	borrowingDate: string;
+	returnDate: string;
+	dailyFine: number;
+	borrowedBooks: Book[];
+	user: LibraryUser;
+}
+
 // Obiekt charakteryzujący wypożyczenie:
-class Booking {
+class Booking implements IBooking {
 	// Ma mieć: datę wypożyczenia, datę zwrotu( +7d od wypożyczenia), id wypożyczonej pozycji, jej tytuł. kara
 	// Ma umożliwiać:
 	// - wypożyczenie ksiązki (jesli książki nie ma w liście - jest niedostepna/
@@ -23,38 +32,39 @@ class Booking {
 		this._user = _user;
 	}
 
-	get id() {
-		return this._id;
-	}
+	// get id() {
+	// 	return this._id;
+	// }
 
-	get borrowingDate() {
-		return this._borrowingDate;
-	}
+	// get borrowingDate() {
+	// 	return this._borrowingDate;
+	// }
 
-	get returnDate() {
-		return this._returnDate;
-	}
+	// get returnDate() {
+	// 	return this._returnDate;
+	// }
 
-	get dailyFine() {
-		return this._dailyFine;
-	}
+	// get dailyFine() {
+	// 	return this._dailyFine;
+	// }
 
-	get borrowedBooks() {
-		return this._borrowedBooks;
-	}
+	// get borrowedBooks() {
+	// 	return this._borrowedBooks;
+	// }
 
-	set borrowedBooks(borrowedBooks: Book[]) {
-		this._borrowedBooks = borrowedBooks;
-	}
+	// set borrowedBooks(borrowedBooks: Book[]) {
+	// 	this._borrowedBooks = borrowedBooks;
+	// }
 
-	get user() {
-		return this._user;
-	}
+	// get user() {
+	// 	return this._user;
+	// }
 
-	set user(user: LibraryUser) {
-		this._user = user;
-	}
+	// set user(user: LibraryUser) {
+	// 	this._user = user;
+	// }
 
+	// za mało logiki w stosunku do wybranej ścieżki rozwiazani
 	borrowBooks(books: Book[]) {
 		books.forEach((book) => {
 			const result = this._borrowedBooks.filter(
@@ -77,6 +87,7 @@ class Booking {
 			}
 			this._borrowedBooks = result;
 		});
+		// brak sprawdzenia czy oplata jest naliczona
 	}
 }
 

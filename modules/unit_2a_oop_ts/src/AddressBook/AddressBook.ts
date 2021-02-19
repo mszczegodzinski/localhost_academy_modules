@@ -12,6 +12,8 @@ class AddressBook {
   }
 
   findGroupByName(groupName: string): Group[] {
+    // .find / .findIndex
+
     helpersFunc.validateSimpleString(groupName);
     const phrase = new RegExp(groupName, 'gi');
     // group.containsPhrase(name)
@@ -21,6 +23,7 @@ class AddressBook {
     return result;
   }
 
+  // tu powinna byc uzyta metoda containsPhrase
   findContactByEmailPhrase(emailPhrase: string): Contact[] {
     helpersFunc.validateSimpleString(emailPhrase);
     const phrase = new RegExp(emailPhrase, 'gi');
@@ -30,7 +33,7 @@ class AddressBook {
     helpersFunc.validateResult(result);
     return result;
   }
-
+  
   removeGroupByName(groupName: string): void {
     const phrase = new RegExp(groupName, 'gi');
     const result = this._groups.filter((group) => !group.name.match(phrase));
@@ -38,6 +41,7 @@ class AddressBook {
     this._groups = result;
   }
 
+  // parametr contact zamiast string
   removeContactByName(emailPhrase: string): void {
     const phrase = new RegExp(emailPhrase, 'gi');
     const result = this._contacts.filter(
@@ -47,19 +51,31 @@ class AddressBook {
     this._contacts = result;
   }
 
+  // argumenty to group, contact
   addContactToGroup(groupName: string, name: string, surname: string, email: string): void {
     helpersFunc.validateSimpleString(groupName);
     helpersFunc.validateSimpleString(name);
     helpersFunc.validateSimpleString(surname);
     helpersFunc.validateEmail(email);
 
-    const firstGroupMatched = this.findGroupByName(groupName);
+    const [foundGroup] = this.findGroupByName(groupName);
+
+    if(!foundGroup){
+      // ... throw error
+    }
+    // check if array is not empty:
     helpersFunc.validateResult(firstGroupMatched);
     // wziąć 1 element
 
     const contact = new Contact(name, surname, email);
+    foundGroup.addContact(contact);
+
     firstGroupMatched[0].addContact(contact);
     this._contacts.push(contact);
+  }
+
+  editContact(contact, key, value){
+    
   }
 
   editContactName(emailPhrase: string, newName: string): void {
@@ -85,7 +101,7 @@ class AddressBook {
     helpersFunc.validateEmail(newEmail);
     firstEmailMatched[0].setEmail(newEmail);
   }
-
+  // create book zamiast add book, poprawic
   addGroupToAddressBook(groupName: string, contactList: Contact[]): void {
     helpersFunc.validateSimpleString(groupName);
     const newGroup = new Group(groupName, contactList);

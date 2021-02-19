@@ -42,16 +42,17 @@ class Library {
 	}
 
 	createBooking(user: LibraryUser, books: Book[]) {
-		const booking = new Booking(user);
 		books.forEach((book) => {
 			if (this._borrowedBooks.length) {
 				this._borrowedBooks.forEach((borrowedBook) => {
 					if (borrowedBook.id === book.id) {
+						// tu zamiast errora console.log
 						throw new Error('You cannot borrow book which is already borrowed');
 					}
 				});
 			}
 		});
+		const booking = new Booking(user);
 		booking.borrowBooks(books);
 		this._bookings.push(booking);
 	}
