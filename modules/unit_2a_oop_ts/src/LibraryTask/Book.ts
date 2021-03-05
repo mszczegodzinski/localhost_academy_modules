@@ -1,66 +1,48 @@
 import { v4 as uuidv4 } from 'uuid';
 import libraryHelpers from './libraryHelpers';
-
-// Obiekt charakteryzujący książkę:
-interface IBook {
-	id: string;
-	image: string;
+import { IBook } from './libraryDef';
+class Book implements IBook {
+	// Ma miec: Tytuł, Autora, uuid, losowe zdjęcie oraz krótki opis
+	private readonly _id: string;
+	private readonly _image: string;
 	title: string;
 	author: string;
 	shortDescription: string;
-}
-class Book implements IBook {
-	// Ma miec: Tytuł, Autora, uuid, losowe zdjęcie oraz krótki opis
-	private readonly _id = uuidv4();
-	private readonly _image = libraryHelpers.generateRandomImagePath();
-	constructor(
-		private _title: string,
-		private _author: string,
-		private _shortDescription: string
-	) {
-		libraryHelpers.validateSimpleString(_title);
-		libraryHelpers.validateSimpleString(_author);
-		libraryHelpers.validateSimpleString(_shortDescription);
 
-		this._title = _title;
-		this._author = _author;
-		this._shortDescription = _shortDescription;
+	constructor(title: string, author: string, shortDescription: string) {
+		libraryHelpers.validateSimpleString(title);
+		libraryHelpers.validateSimpleString(author);
+		libraryHelpers.validateSimpleString(shortDescription);
+
+		this._id = uuidv4();
+		this._image = libraryHelpers.generateRandomImagePath();
+		this.title = title;
+		this.author = author;
+		this.shortDescription = shortDescription;
 	}
 
-	// get id() {
-	// 	return this._id;
-	// }
+	get id() {
+		return this._id;
+	}
 
-	// get image() {
-	// 	return this._image;
-	// }
+	get image() {
+		return this._image;
+	}
 
-	// get title() {
-	// 	return this._title;
-	// }
+	setTitle(title: string): void {
+		libraryHelpers.validateSimpleString(title);
+		this.title = title;
+	}
 
-	// set title(title: string) {
-	// 	libraryHelpers.validateSimpleString(title);
-	// 	this._title = title;
-	// }
+	setAuthor(author: string): void {
+		libraryHelpers.validateSimpleString(author);
+		this.author = author;
+	}
 
-	// get author() {
-	// 	return this._author;
-	// }
-
-	// set author(author: string) {
-	// 	libraryHelpers.validateSimpleString(author);
-	// 	this._author = author;
-	// }
-
-	// get shortDescription() {
-	// 	return this._shortDescription;
-	// }
-
-	// set shortDescription(shortDescription: string) {
-	// 	libraryHelpers.validateSimpleString(shortDescription);
-	// 	this._shortDescription = shortDescription;
-	// }
+	setShortDescription(shortDescription: string): void {
+		libraryHelpers.validateSimpleString(shortDescription);
+		this.shortDescription = shortDescription;
+	}
 }
 
 export default Book;

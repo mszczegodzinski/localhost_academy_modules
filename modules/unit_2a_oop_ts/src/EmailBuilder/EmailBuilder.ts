@@ -8,73 +8,72 @@
 
 import Email from './Email';
 import emailUtils from './emailUtils';
+import { IEmailBuilder, IEmail } from './emailDef';
 
-class EmailBuilder {
-	private email: Email;
-
-	private _from!: string;
-	private _to!: string[];
-	private _title!: string;
-	private _html!: string;
-	private _cc?: string[];
-	private _bcc?: string[];
+class EmailBuilder implements IEmailBuilder {
+	private _email: IEmail;
 
 	constructor() {
-		// this._from = _from;
-		// this._to = _to;
-		// this._title = _title;
-		// this._html = _html;
-		// this._cc = _cc;
-		// this._bcc = _bcc;
+		this._email = {
+			from: '',
+			to: [''],
+			title: '',
+			html: '',
+			cc: [''],
+			bcc: [''],
+		};
 	}
 
-	setFrom(from: string) {
-		// tu ma byc zmienany email a nie email builder
+	get email() {
+		return this._email;
+	}
+
+	setFrom(from: string): IEmailBuilder {
 		emailUtils.validateEmail(from);
-		this._from = from;
+		this.email.from = from;
 		return this;
 	}
 
-	setTo(to: string[]) {
+	setTo(to: string[]): EmailBuilder {
 		emailUtils.validateEmails(to);
-		this._to = to;
+		this.email.to = to;
 		return this;
 	}
 
-	setCc(cc: string[]) {
+	setCc(cc: string[]): EmailBuilder {
 		emailUtils.validateEmails(cc);
-		this._cc = cc;
+		this.email.cc = cc;
 		return this;
 	}
 
-	setBcc(bcc: string[]) {
+	setBcc(bcc: string[]): EmailBuilder {
 		emailUtils.validateEmails(bcc);
-		this._bcc = bcc;
+		this.email.bcc = bcc;
 		return this;
 	}
 
-	setTitle(title: string) {
+	setTitle(title: string): EmailBuilder {
 		emailUtils.validateSimpleString(title);
-		this._title = title;
+		this.email.title = title;
 		return this;
 	}
 
-	setHtml(html: string) {
-		emailUtils.validateSimpleString(html);
-		this._html = html;
+	setHtml(html: string): EmailBuilder {
+		emailUtils.validateHTML(html);
+		this.email.html = html;
 		return this;
 	}
 
-	build() {
+	build(): Email {
+		//zbedna walidacja w tym miejscu?
 		const email = new Email(
-			this._from,
-			this._to,
-			this._title,
-			this._html,
-			this._cc,
-			this._bcc
+			this.email.from,
+			this.email.to,
+			this.email.title,
+			this.email.html,
+			this.email.cc,
+			this.email.bcc
 		);
-
 		return email;
 	}
 }
@@ -89,5 +88,7 @@ const someEmail = new EmailBuilder()
 	.setCc(['someccmail@gmail.com'])
 	.setBcc(['bccmail@gmail.com'])
 	.build();
+
+// const someEmail = new EmailBuilder().setFrom('mailfrom@gmail.com').build();
 
 console.log(someEmail);

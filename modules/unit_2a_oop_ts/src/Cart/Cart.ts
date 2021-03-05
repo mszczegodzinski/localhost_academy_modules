@@ -1,77 +1,90 @@
 import { v4 as uuidv4 } from 'uuid';
 import cartHelpers from './cartHelpers';
 import CartItem from './CartItem';
-// Stwórz strukturę danych związaną ze sklepem internetowym
-
+import { ICart, ICartItem } from './cartDef';
 // Obiekt charakteryzujący koszyk:
-class Cart {
+class Cart implements ICart {
 	// Ma mieć: uuid, listę wybranych przedmiotów, rabat % na koszyk, kod rabatowy
 	// Ma umożliwiać:
 	// - dodawanie/usuwanie przedmiotów do/z koszyka
 	// - zmianę ilości produktu w koszyku
 	// - podliczać wartość koszyka uwzględniajac rabaty
 	// walidacja do poprawy
-	private readonly _id = uuidv4();
-	private _total = 0;
-	
-	constructor(private _items: CartItem[], private _discount: number, private _discountCode: string) {
-		cartHelpers.validateDiscount(_discount);
-		cartHelpers.validateSimpleString(_discountCode);
 
-		this._items = _items;
-		this._discount = _discount;
-		this._discountCode = _discountCode;	
-		this._total = this.calculateTotalPrice();	
+	private readonly _id: string;
+	items: ICartItem[];
+	discount: number;
+	discountCode: string;
+	total: number;
+
+	constructor(items: CartItem[], discountCode: string) {
+		cartHelpers.validateSimpleString(discountCode);
+
+		this._id = uuidv4();
+		this.items = items;
+		this.discount = 1;
+		this.discountCode = discountCode;
+		this.total = this.calculateTotalPrice();
 	}
 
-	addItem(item: CartItem) {
-		// brak logiki mergowania takich samyhc produktów
-		this._items.push(item);
+	get id() {
+		return this._id;
 	}
 
-	// id?
-	removeItem(item: CartItem) {
-		const result = this._items.filter((cartItem) => cartItem.name !== item.name);
-		this._items = result;
+	addItem(item: ICartItem): void {
+		const resultElement = items.find(({ id }) => id === item.id);
+		if (resultElement) {
+			resultElement.quantity += item.quantity;
+		} else {
+			this.items.push(item);
+		}
 	}
 
-	setItemQuantity(item: CartItem, quantity: number) {
+	removeItem(item: ICartItem) {
+		const index = items.findIndex(({ id }) => id === item.id);
+		if (index === -1) {
+			throw new Error('No item to remove found');
+		}
+		this.items.splice(index, 1);
+	}
+
+	setItemQuantity(item: ICartItem, quantity: number) {
 		cartHelpers.validateItemQuantity(quantity);
+		const searchedItem = this.items.find(({ id }) => id === item.id);
 
-		const searchedItem = this._items.filter(currentItem => currentItem.name === item.name)[0];
+		if (!searchedItem) {
+			throw new Error('No item found');
+		}
 		if (!quantity) {
 			this.removeItem(searchedItem);
 		}
-		if(!searchedItem) {
-			throw new Error('No item found');
-		}
-		// tutaj wygodniej bedzie uzyc find i szukanie zmienic na po ID
-		this._items.forEach(currentItem => {
-			if(currentItem.name === item.name){
-				currentItem.quantity = quantity;
-			}
-		})
-	}
 
-	setDiscount(cartDiscount: number): void {
-		cartHelpers.validateDiscount(cartDiscount);
-		this._discount = cartDiscount;
+		searchedItem.setQuantity(quantity);
 	}
 
 	setDiscountCode(discountCode: string): void {
 		cartHelpers.validateSimpleString(discountCode);
-		this._discountCode = discountCode;
-		// setDiscount do skasowania i na podstawie discount code powinien zmieniac sie discount
+		this.discountCode = discountCode;
+
+		if (discountCode === '10percent') {
+			this.discount = 0.1;
+			return;
+		}
+		if (discountCode === '15percent') {
+			this.discount = 0.15;
+			return;
+		}
+		console.log('Invalid discount code');
 	}
 
 	// try change using reduce method:
 	calculateTotalPrice(): number {
 		// total price all product with their specific discount:
-		const partResult = this._items.reduce((total, item) => {
-			return total + item.price * item.quantity * (1 - item.discount / 100);
+		const partResult = this.items.reduce((total, item) => {
+			return total + item.calculatePrice();
 		}, 0);
 		// total price with cart discount:
-		const result = partResult * (1 - this._discount / 100);
+		const result = partResult * (1 - this.discount / 100);
 		return result;
 	}
 }
@@ -82,5 +95,5 @@ const cartItem1 = new CartItem('product1', 'Category 1', 500, 10, 2);
 const cartItem2 = new CartItem('product2', 'Category 2', 750, 5, 1);
 const items = [cartItem1, cartItem2];
 
-const cart = new Cart(items, 10, '10percent');
+const cart = new Cart(items, '10percent');
 console.log('cart ', cart);

@@ -24,14 +24,23 @@ const validateEmail = (email: string): void => {
 	}
 };
 
-const validateEmails = (emails: string[]): void => {
-	emails.forEach((email) => {
-		validateEmail(email);
-	});
+const validateHTML = (html: string): void => {
+	if (!html.trim().length) {
+		throw new Error('Incorrect data length. Length cannot be 0');
+	}
+};
+
+const validateEmails = (emails: string[] | undefined): void => {
+	if (emails !== undefined) {
+		emails.forEach((email) => {
+			validateEmail(email);
+		});
+	}
 };
 
 const emailUtils = {
 	validateEmail,
+	validateHTML,
 	validateEmails,
 	validateSimpleString,
 };

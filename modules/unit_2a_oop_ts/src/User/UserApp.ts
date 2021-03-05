@@ -1,14 +1,19 @@
 import User from './User';
 import userHelpers from './userHelpers';
+import { IUserApp } from './userDef';
+class UserApp implements IUserApp {
+	users: User[];
 
-// poprawiono nazwe z validate na checkUserAccess
-class UserApp {
-	constructor(private users: User[]) {
+	constructor(users: User[]) {
 		this.users = users;
 		// this.logs, history
 	}
 
-	changeUserPassword(userToModify: User, modifierUser: User, password: string) {
+	changeUserPassword(
+		userToModify: User,
+		modifierUser: User,
+		password: string
+	): void {
 		userHelpers.checkUserAccess(userToModify, modifierUser);
 		userHelpers.validatePassword(password);
 
@@ -20,24 +25,22 @@ class UserApp {
 			throw new Error('No user found');
 		}
 
-		this.users[selectedIndex].password = password;
-
-		this.users.forEach((currentUser) => {
-			if (currentUser.id === userToModify.id) {
-				currentUser.password = password;
-			}
-		});
+		this.users[selectedIndex].changePassword(password);
 	}
 
-	changeUserEmail(userToModify: User, modifierUser: User, email: string) {
+	changeUserEmail(userToModify: User, modifierUser: User, email: string): void {
 		userHelpers.checkUserAccess(userToModify, modifierUser);
 		userHelpers.validateEmail(email);
 
-		this.users.forEach((currentUser) => {
-			if (currentUser.id === userToModify.id) {
-				currentUser.email = email;
-			}
-		});
+		const selectedIndex = this.users.findIndex(
+			(user) => user.id === userToModify.id
+		);
+
+		if (selectedIndex === -1) {
+			throw new Error('No user found');
+		}
+
+		this.users[selectedIndex].changeEmail(email);
 	}
 }
 

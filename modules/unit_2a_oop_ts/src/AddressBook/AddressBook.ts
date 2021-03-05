@@ -1,140 +1,118 @@
 import Group from './Group';
 import Contact from './Contact';
 import helpersFunc from './helpers';
+import {
+	IAddressBookManageContacts,
+	IAddressBookManageGroup,
+	IContact,
+	IGroup,
+	Property,
+} from './addressBookDef';
 
 // Obiekt charakteryzujący książke adresową
-class AddressBook {
-  // Ma mieć: listę wszystkich kontaktów, listę grup kontaktów
-  // Ma umożliwiać: szukanie kontaktu po frazie, dodawanie/usuwanie/modyfikacje nowych kontaktów, dodawanie/usuwanie/modyfikacje nowych grup
-  constructor(private _groups: Group[], private _contacts: Contact[]) {
-    this._groups = _groups;
-    this._contacts = _contacts;
-  }
+class AddressBook
+	implements IAddressBookManageContacts, IAddressBookManageGroup {
+	// Ma mieć: listę wszystkich kontaktów, listę grup kontaktów
+	// Ma umożliwiać: szukanie kontaktu po frazie, dodawanie/usuwanie/modyfikacje nowych kontaktów, dodawanie/usuwanie/modyfikacje nowych grup
+	private _groups: IGroup[];
+	private _contacts: IContact[];
 
-  findGroupByName(groupName: string): Group[] {
-    // .find / .findIndex
+	constructor() {
+		this._groups = [];
+		this._contacts = [];
+	}
 
-    helpersFunc.validateSimpleString(groupName);
-    const phrase = new RegExp(groupName, 'gi');
-    // group.containsPhrase(name)
+	get groups() {
+		return this._groups;
+	}
 
-    const result = this._groups.filter((group) => group.name.match(phrase));
-    helpersFunc.validateResult(result);
-    return result;
-  }
+	get contacts() {
+		return this._contacts;
+	}
 
-  // tu powinna byc uzyta metoda containsPhrase
-  findContactByEmailPhrase(emailPhrase: string): Contact[] {
-    helpersFunc.validateSimpleString(emailPhrase);
-    const phrase = new RegExp(emailPhrase, 'gi');
-    const result = this._contacts.filter((contact) =>
-      contact.email.match(phrase)
-    );
-    helpersFunc.validateResult(result);
-    return result;
-  }
-  
-  removeGroupByName(groupName: string): void {
-    const phrase = new RegExp(groupName, 'gi');
-    const result = this._groups.filter((group) => !group.name.match(phrase));
-    helpersFunc.validateResult(result);
-    this._groups = result;
-  }
+	removeGroup(group: IGroup): void {
+		const index = this._groups.findIndex(({ id }) => id === group.id);
+		if (index === -1) {
+			throw new Error('No group to remove');
+		}
+		this._groups.splice(index, 1);
+	}
 
-  // parametr contact zamiast string
-  removeContactByName(emailPhrase: string): void {
-    const phrase = new RegExp(emailPhrase, 'gi');
-    const result = this._contacts.filter(
-      (contact) => !contact.email.match(phrase)
-    );
-    helpersFunc.validateResult(result);
-    this._contacts = result;
-  }
+	removeContact(contact: IContact): void {
+		const index = this._contacts.findIndex(({ id }) => id === contact.id);
+		if (index === -1) {
+			throw new Error('No contact to remove');
+		}
+		this._contacts.splice(index, 1);
+	}
 
-  // argumenty to group, contact
-  addContactToGroup(groupName: string, name: string, surname: string, email: string): void {
-    helpersFunc.validateSimpleString(groupName);
-    helpersFunc.validateSimpleString(name);
-    helpersFunc.validateSimpleString(surname);
-    helpersFunc.validateEmail(email);
+	addContactToGroup(group: IGroup, contact: IContact): void {
+		const result = this._groups.find(({ id }) => id === group.id);
+		if (!result) {
+			throw new Error("This group doesn't exist in the Address Book yet");
+		}
+		result.addContact(contact);
+	}
 
-    const [foundGroup] = this.findGroupByName(groupName);
+	editContact(contact: IContact, property: Property, propValue: string): void {
+		const result = this._contacts.find(({ id }) => id === contact.id);
+		if (!result) {
+			console.log('No contact to edit');
+		}
+		if (result && property === 'email') {
+			result.setEmail(propValue);
+			console.log('Email was updated');
+		}
+		if (result && property === 'surname') {
+			result.setSurname(propValue);
+			console.log('Surname was updated');
+		}
+		if (result && property === 'email') {
+			result.setName(propValue);
+			console.log('Name was updated');
+		}
+	}
 
-    if(!foundGroup){
-      // ... throw error
-    }
-    // check if array is not empty:
-    helpersFunc.validateResult(firstGroupMatched);
-    // wziąć 1 element
+	addGroupToAddressBook(newGroup: IGroup): void {
+		const result = this._groups.findIndex(({ id }) => id === newGroup.id);
+		if (result !== -1) {
+			throw new Error('This group is already in the Address Book');
+		}
+		this._groups.push(newGroup);
+	}
 
-    const contact = new Contact(name, surname, email);
-    foundGroup.addContact(contact);
-
-    firstGroupMatched[0].addContact(contact);
-    this._contacts.push(contact);
-  }
-
-  editContact(contact, key, value){
-    
-  }
-
-  editContactName(emailPhrase: string, newName: string): void {
-    const firstEmailMatched = this.findContactByEmailPhrase(emailPhrase);
-    helpersFunc.validateResult(firstEmailMatched);
-
-    helpersFunc.validateSimpleString(newName);
-    firstEmailMatched[0].name = newName;
-  }
-
-  editContactSurame(emailPhrase: string, newSurname: string) {
-    const firstEmailMatched = this.findContactByEmailPhrase(emailPhrase);
-    helpersFunc.validateResult(firstEmailMatched);
-
-    helpersFunc.validateSimpleString(newSurname);
-    firstEmailMatched[0].surname = newSurname;
-  }
-
-  editContactEmail(emailPhrase: string, newEmail: string): void {
-    const firstEmailMatched = this.findContactByEmailPhrase(emailPhrase);
-    helpersFunc.validateResult(firstEmailMatched);
-
-    helpersFunc.validateEmail(newEmail);
-    firstEmailMatched[0].setEmail(newEmail);
-  }
-  // create book zamiast add book, poprawic
-  addGroupToAddressBook(groupName: string, contactList: Contact[]): void {
-    helpersFunc.validateSimpleString(groupName);
-    const newGroup = new Group(groupName, contactList);
-    this._groups.push(newGroup);
-  }
-
-  editGroupName(groupPhrase: string, newGroupName: string): void {
-    const firstGroupMatched = this.findGroupByName(groupPhrase);
-    helpersFunc.validateSimpleString(newGroupName);
-    helpersFunc.validateResult(firstGroupMatched)
-    firstGroupMatched[0].name = newGroupName;
-  }
+	editGroupName(group: IGroup, name: string): void {
+		helpersFunc.validateSimpleString(name);
+		const result = this._groups.find(({ id }) => id === group.id);
+		if (!result) {
+			console.log('No group found');
+		}
+		if (result) {
+			result.setName(name);
+			console.log('Group name was updated');
+		}
+	}
 }
 
 const contactList1 = [
-  new Contact('Jan', 'Kowalski', 'jankowalski@gmail.com'),
-  new Contact('Jan', 'Nowak', 'jannowak@gmail.com'),
-  new Contact('Marcin', 'Krol', 'marcinkrol@gmail.com'),
-  new Contact('Mateusz', 'Zimny', 'mateuszzimny@gmail.com'),
+	new Contact('Jan', 'Kowalski', 'jankowalski@gmail.com'),
+	new Contact('Jan', 'Nowak', 'jannowak@gmail.com'),
+	new Contact('Marcin', 'Krol', 'marcinkrol@gmail.com'),
+	new Contact('Mateusz', 'Zimny', 'mateuszzimny@gmail.com'),
 ];
 const contactList2 = [
-  new Contact('Jan1', 'Kowalski', 'jan1kowalski@gmail.com'),
-  new Contact('Jan2', '1Nowak', 'jan21nowak@gmail.com'),
-  new Contact('Marcin', '5Krol', 'marcin5krol@gmail.com'),
-  new Contact('Mateusz', 'Zimny', 'mateuszzimny@gmail.com'),
+	new Contact('Jan1', 'Kowalski', 'jan1kowalski@gmail.com'),
+	new Contact('Jan2', '1Nowak', 'jan21nowak@gmail.com'),
+	new Contact('Marcin', '5Krol', 'marcin5krol@gmail.com'),
+	new Contact('Mateusz', 'Zimny', 'mateuszzimny@gmail.com'),
 ];
-const group1 = new Group('Group 1', contactList1);
-const group2 = new Group('Group 2', contactList2);
+const group1 = new Group('Group 1');
+const group2 = new Group('Group 2');
 // czy zmienne przechowujace klase z wielkiek litery?
-const addressBook = new AddressBook(
-  [group1, group2],
-  [...contactList1, ...contactList2]
-);
+// const addressBook = new AddressBook(
+// 	[group1, group2],
+// 	[...contactList1, ...contactList2]
+// );
 
 // console.log(group1);
 // console.log('=====================');
@@ -145,8 +123,8 @@ console.log('=====================');
 // console.log(addressBook.findGroupByName('Group'));
 // console.log(addressBook.findGroupByName('1'));
 // addressBook.removeGroupByName('1');
-addressBook.removeContactByName('jan');
-console.log(addressBook);
+// addressBook.removeContact('jan');
+// console.log(addressBook);
 
 // co zrobić z duplikatami, ktore sa od poczatku w "bazie" ?
 export default AddressBook;

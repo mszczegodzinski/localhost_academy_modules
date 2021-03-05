@@ -1,17 +1,9 @@
 import { v4 as uuidv4 } from 'uuid';
 import cartHelpers from './cartHelpers';
-import { Category } from './cartHelpers';
+import { ICartItem, Category } from './cartDef';
 // Stwórz strukturę danych związaną ze sklepem internetowym
 // Obiekt charakteryzujący przedmiot:
 
-interface ICartItem {
-	id: string;
-	name: string;
-	category: Category;
-	price: number;
-	discount: number;
-	quantity: number;
-}
 class CartItem implements ICartItem {
 	// Ma miec: Nazwę, Kategorię, Cenę, Rabat % na przedmiot, uuid
 	// Ma umożliwiać:
@@ -19,73 +11,62 @@ class CartItem implements ICartItem {
 	// - określać jego rabat procentowy
 	// - dodawać produkt do kategorii
 	// - zmianę nazwy, ceny lub rabatu
-	private readonly _id = uuidv4();
-	constructor(
-		private _name: string,
-		private _category: Category,
-		private _price: number,
-		private _discount: number,
-		private _quantity: number
-	) {
-		cartHelpers.validateSimpleString(_name);
-		cartHelpers.validateSimpleString(_category);
-		cartHelpers.validatePrice(_price);
-		cartHelpers.validateDiscount(_discount);
+	private readonly _id: string;
+	name: string;
+	category: Category;
+	price: number;
+	discount: number;
+	quantity: number;
 
-		this._name = _name;
-		this._category = _category;
-		this._price = _price;
-		this._discount = _discount;
-		this._quantity = _quantity;
+	constructor(
+		name: string,
+		category: Category,
+		price: number,
+		discount: number,
+		quantity: number
+	) {
+		cartHelpers.validateSimpleString(name);
+		cartHelpers.validatePrice(price);
+		cartHelpers.validateDiscount(discount);
+
+		this._id = uuidv4();
+		this.name = name;
+		this.category = category;
+		this.price = price;
+		this.discount = discount;
+		this.quantity = quantity;
 	}
 
-	// get name() {
-	// 	return this._name;
-	// }
+	get id() {
+		return this._id;
+	}
 
-	// set name(name: string) {
-	// 	cartHelpers.validateSimpleString(name);
-	// 	this._name = name;
-	// }
+	setName(name: string): void {
+		cartHelpers.validateSimpleString(name);
+	}
 
-	// get price() {
-	// 	return this._price;
-	// }
+	setPrice(price: number): void {
+		cartHelpers.validatePrice(price);
+	}
 
-	// set price(price: number) {
-	// 	cartHelpers.validatePrice(price);
-	// 	this._price = price;
-	// }
+	setQuantity(quanity: number): void {
+		cartHelpers.validateItemQuantity(quanity);
+	}
 
-	// get category() {
-	// 	return this._category;
-	// }
+	setDiscount(discount: number): void {
+		cartHelpers.validateDiscount(discount);
+	}
 
-	// set category(category: Category) {
-	// 	cartHelpers.validateSimpleString(category);
-	// 	this._category = category;
-	// }
-
-	// get discount() {
-	// 	return this._discount;
-	// }
-	// // integer 0-99
-	// set discount(discount: number) {
-	// 	cartHelpers.validateDiscount(discount);
-	// 	this._discount = discount;
-	// }
-
-	// get quantity() {
-	// 	return this._quantity;
-	// }
-
-	// set quantity(quantity: number) {
-	// 	cartHelpers.validateItemQuantity(quantity);
-	// 	this._quantity = quantity;
-	// }
+	calculatePrice(): number {
+		const result = this.quantity * this.price * (1 - this.discount / 100);
+		return result;
+	}
 }
 
 export default CartItem;
 
 const cartItem1 = new CartItem('product1', 'Category 1', 500, 10, 2);
 const cartItem2 = new CartItem('product2', 'Category 2', 750, 5, 1);
+
+const result = cartItem1.calculatePrice();
+console.log(result);

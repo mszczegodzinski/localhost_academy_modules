@@ -26,10 +26,12 @@ const generateRandomImagePath = () => {
 	return paths[pathIndex];
 };
 
-const addDays = (date: Date, days: number): string => {
+// const addDays = (date: Date, days: number): string => {
+const addDays = (date: Date, days: number): Date => {
 	const result = new Date(date);
 	result.setDate(result.getDate() + days);
-	return result.toLocaleDateString();
+	// return result.toLocaleDateString();
+	return result;
 };
 
 const libraryHelpers = {

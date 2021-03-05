@@ -2,16 +2,8 @@ import libraryHelpers from './libraryHelpers';
 import Book from './Book';
 import LibraryUser from './LibraryUser';
 import { v4 as uuidv4 } from 'uuid';
-
-interface IBooking {
-	id: string;
-	borrowingDate: string;
-	returnDate: string;
-	dailyFine: number;
-	borrowedBooks: Book[];
-	user: LibraryUser;
-}
-
+import { IBooking, ILibraryUser, IBook } from './libraryDef';
+import helpersFunc from './libraryHelpers';
 // Obiekt charakteryzujący wypożyczenie:
 class Booking implements IBooking {
 	// Ma mieć: datę wypożyczenia, datę zwrotu( +7d od wypożyczenia), id wypożyczonej pozycji, jej tytuł. kara
@@ -21,73 +13,84 @@ class Booking implements IBooking {
 	// dostępnych,
 	// - zwrot - jeśli odbędzie się terminowo kara jest 0 - jesli nie -
 	// każdy dzień zwłoki to naliczenie jakiejś kary.
+	private readonly _id: string;
+	borrowingDate: string;
+	plannedReturnDate: Date;
+	dailyFine: number;
+	borrowedBooks: IBook[];
+	user: ILibraryUser;
 
-	private readonly _id = uuidv4();
-	private readonly _borrowingDate = new Date().toLocaleDateString();
-	private readonly _returnDate = libraryHelpers.addDays(new Date(), 7);
-	private readonly _dailyFine = 5;
-	private _borrowedBooks: Book[] = [];
-
-	constructor(private _user: LibraryUser) {
-		this._user = _user;
+	constructor(user: ILibraryUser) {
+		this._id = uuidv4();
+		this.borrowingDate = new Date().toLocaleDateString();
+		this.plannedReturnDate = libraryHelpers.addDays(new Date(), 7);
+		this.dailyFine = 5;
+		this.borrowedBooks = [];
+		this.user = user;
 	}
 
-	// get id() {
-	// 	return this._id;
-	// }
+	get id() {
+		return this._id;
+	}
 
-	// get borrowingDate() {
-	// 	return this._borrowingDate;
-	// }
-
-	// get returnDate() {
-	// 	return this._returnDate;
-	// }
-
-	// get dailyFine() {
-	// 	return this._dailyFine;
-	// }
-
-	// get borrowedBooks() {
-	// 	return this._borrowedBooks;
-	// }
-
-	// set borrowedBooks(borrowedBooks: Book[]) {
-	// 	this._borrowedBooks = borrowedBooks;
-	// }
-
-	// get user() {
-	// 	return this._user;
-	// }
-
-	// set user(user: LibraryUser) {
-	// 	this._user = user;
-	// }
-
-	// za mało logiki w stosunku do wybranej ścieżki rozwiazani
-	borrowBooks(books: Book[]) {
+	borrowBooks(books: IBook[]): void {
 		books.forEach((book) => {
-			const result = this._borrowedBooks.filter(
-				(currentBook) => currentBook.id === book.id
-			);
-			if (!result.length) {
-				throw new Error('You cannot borrow book which is already borrowed');
+			const index = this.borrowedBooks.findIndex(({ id }) => id === book.id);
+			if (index !== -1) {
+				console.log(
+					`You cannot borrow book with ID ${book.id} because it is already borrowed`
+				);
+			} else {
+				this.borrowedBooks.push(book);
 			}
-			this._borrowedBooks.push(book);
 		});
 	}
 
-	returnBooks(books: Book[]) {
+	returnBooks(books: IBook[], returnDate: Date): void {
+		let totalFine = 0;
 		books.forEach((book) => {
-			const result = this._borrowedBooks.filter(
-				(currentBook) => currentBook.id !== book.id
-			);
-			if (!result.length) {
-				throw new Error('No book to remove found');
+			const index = this.borrowedBooks.findIndex(({ id }) => id === book.id);
+			// check if passed book is borrowed:
+			if (index === -1) {
+				console.log(`Book with id ${book.id} was not found`);
+			} else {
+				// check if uset have to pay fine and calculate it:
+				const plannedReturnDate = this.plannedReturnDate;
+				const currentReturnDate = returnDate;
+				const partFine = this.calculateFine(
+					currentReturnDate,
+					plannedReturnDate,
+					book.id
+				);
+				totalFine += partFine;
+				// delete returned book:
+				this.borrowedBooks.splice(index, 1);
 			}
-			this._borrowedBooks = result;
 		});
-		// brak sprawdzenia czy oplata jest naliczona
+		if (totalFine) {
+			console.log(`Your total fine is ${totalFine}PLN`);
+		}
+	}
+
+	calculateFine(
+		currentReturnDate: Date,
+		plannedReturnDate: Date,
+		idBook: string
+	): number {
+		let partFine = 0;
+		const oneDayInMilliSeconds = 1000 * 60 * 60 * 24;
+		if (currentReturnDate > plannedReturnDate) {
+			const delayInDays = (
+				(Date.parse(currentReturnDate.toString()) -
+					Date.parse(plannedReturnDate.toString())) /
+				oneDayInMilliSeconds
+			).toFixed(0);
+			partFine = parseInt(delayInDays) * this.dailyFine;
+			console.log(
+				`Your delay is ${delayInDays} days. You have to pay ${partFine}PLN fine for book with ID ${idBook}`
+			);
+		}
+		return partFine;
 	}
 }
 
@@ -113,6 +116,16 @@ const libraryUser1 = new LibraryUser('user1name', 'user1surname');
 const libraryUser2 = new LibraryUser('user2name', 'user2surname');
 const booking1 = new Booking(libraryUser1);
 const booking2 = new Booking(libraryUser2);
+
+const result = booking1.borrowingDate;
+// console.log(new Date(booking1.borrowingDate) > new Date('4.03.2021'));
+// console.log(Date.parse(booking1.borrowingDate));
+
+booking1.borrowedBooks = [book1, book2, book3];
+let retDate = new Date();
+const resultDate = helpersFunc.addDays(retDate, 40);
+// const argument = new Date(resultDate);
+booking1.returnBooks([book1, book2], resultDate);
 
 // booking1.borrowBooks([book1]);
 // console.log(booking1);

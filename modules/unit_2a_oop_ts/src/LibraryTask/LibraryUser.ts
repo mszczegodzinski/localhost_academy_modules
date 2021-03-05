@@ -1,42 +1,32 @@
 import { v4 as uuidv4 } from 'uuid';
 import libraryHelpers from './libraryHelpers';
-
-interface ILibraryUser {
-	id: string;
+import { ILibraryUser } from './libraryDef';
+class LibraryUser implements ILibraryUser {
+	private readonly _id: string;
 	name: string;
 	surname: string;
-}
 
-class LibraryUser implements ILibraryUser {
-	private readonly _id = uuidv4();
-	constructor(private _name: string, private _surname: string) {
-		libraryHelpers.validateSimpleString(_name);
-		libraryHelpers.validateSimpleString(_surname);
-		this._name = _name;
-		this._surname = _surname;
+	constructor(name: string, surname: string) {
+		libraryHelpers.validateSimpleString(name);
+		libraryHelpers.validateSimpleString(surname);
+		this._id = uuidv4();
+		this.name = name;
+		this.surname = surname;
 	}
 
-	// get id() {
-	// 	return this._id;
-	// }
+	get id() {
+		return this._id;
+	}
 
-	// get name() {
-	// 	return this._name;
-	// }
+	setName(name: string): void {
+		libraryHelpers.validateSimpleString(name);
+		this.name = name;
+	}
 
-	// set name(name: string) {
-	// 	libraryHelpers.validateSimpleString(name);
-	// 	this._name = name;
-	// }
-
-	// get surname() {
-	// 	return this._surname;
-	// }
-
-	// set surname(surname: string) {
-	// 	libraryHelpers.validateSimpleString(surname);
-	// 	this._surname = surname;
-	// }
+	setSurname(surname: string): void {
+		libraryHelpers.validateSimpleString(surname);
+		this.surname = surname;
+	}
 }
 
 export default LibraryUser;

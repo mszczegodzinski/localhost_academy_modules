@@ -48,8 +48,6 @@ const validateItemQuantity = (itemAmount: number) => {
 	}
 };
 
-export type Category = 'Category 1' | 'Category 2' | 'Category 3';
-
 const cartHelpers = {
 	validateSimpleString,
 	validatePrice,

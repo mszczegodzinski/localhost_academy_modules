@@ -1,13 +1,20 @@
-import task from './task1';
-import getMyAge from './getMyAge/getMyAge';
-import arrayIntoRandomChunks from './arrayIntoRandomChunks/arrayIntoRandomChunks';
-import findPhraseInArray from './findPhraseInArray/findPhraseInArray';
-import generateHuman from './generateHuman/generateHuman';
-import {
-	generateArrayWithRandomNumbers,
-	generateArrayOfArrays,
-} from './generateArrayWithRandomNumbers/generateArrayWithRandomNumbers';
-
+// import task from './task1';
+// import getMyAge from './getMyAge/getMyAge';
+// import arrayIntoRandomChunks from './arrayIntoRandomChunks/arrayIntoRandomChunks';
+// import findPhraseInArray from './findPhraseInArray/findPhraseInArray';
+// import generateHuman from './generateHuman/generateHuman';
+// import {
+// 	generateArrayWithRandomNumbers,
+// 	generateArrayOfArrays,
+// } from './generateArrayWithRandomNumbers/generateArrayWithRandomNumbers';
+import EmailBuilder from './src/EmailBuilder/EmailBuilder';
+import Cart from './src/Cart/Cart';
+import CartItem from './src/Cart/CartItem';
+import Booking from './src/LibraryTask/Booking';
+import LibraryUser from './src/LibraryTask/LibraryUser';
+import Book from './src/LibraryTask/Book';
+import helpersFunc from './src/LibraryTask/libraryHelpers';
+import Library from './src/LibraryTask/Library';
 // task()
 
 // ====================================================
@@ -30,23 +37,23 @@ import {
 
 // ======================================================
 
-const inputData = [
-	'stwórz',
-	'sobie',
-	'tutaj',
-	'więcej',
-	'wyrazów',
-	'wyrazSzosty',
-	'wyrazSiodmy',
-	'wyrazOsmy',
-	'wyrazDziewiaty',
-	'wyrazDziesiaty',
-	'wyrazJedenasty',
-	'wyrazDwunasty',
-	'wyrazTrzynasty',
-	'wyrazCzternasty',
-	'wyrazPietnasty',
-];
+// const inputData = [
+// 	'stwórz',
+// 	'sobie',
+// 	'tutaj',
+// 	'więcej',
+// 	'wyrazów',
+// 	'wyrazSzosty',
+// 	'wyrazSiodmy',
+// 	'wyrazOsmy',
+// 	'wyrazDziewiaty',
+// 	'wyrazDziesiaty',
+// 	'wyrazJedenasty',
+// 	'wyrazDwunasty',
+// 	'wyrazTrzynasty',
+// 	'wyrazCzternasty',
+// 	'wyrazPietnasty',
+// ];
 // const findPhraseResult = findPhraseInArray(inputData, 'wyraz');
 // console.log(findPhraseResult);
 
@@ -61,3 +68,9 @@ const inputData = [
 // console.log(resultArrayofArrays);
 
 // ======================================================
+// console.log(EmailBuilder);
+
+// console.log(Cart);
+// console.log(CartItem);
+// console.log(Booking);
+console.log(Library);

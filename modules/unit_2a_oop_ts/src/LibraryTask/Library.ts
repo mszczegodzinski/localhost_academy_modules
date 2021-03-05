@@ -1,79 +1,122 @@
 import Book from './Book';
 import Booking from './Booking';
 import LibraryUser from './LibraryUser';
+import { IBook, IBooking, ILibrary, ILibraryUser } from './libraryDef';
 // Stwórz strukturę danych związaną z wypożyczaniem książek
 // Obiekt charakteryzujący bibliotekę:
-class Library {
+class Library implements ILibrary {
 	// Ma miec: listę książek, listę wypożyczeń oraz listę wypożyczonych książek
 	// Ma umożliwiać:
 	// - dodawanie książek do listy
 	// - usuwanie książek z listy
 	// - wypożyczanie książki dla usera X
 	// - oddanie wypożyczania książki
-	private _books: Book[] = [];
-	private _bookings: Booking[] = [];
-	private _borrowedBooks: Book[] = [];
+	private _books: IBook[] = [];
+	private _bookings: IBooking[] = [];
+	private _borrowedBooks: IBook[] = [];
 
-	addBooks(books: Book[]) {
+	get books() {
+		return this._books;
+	}
+
+	get bookings() {
+		return this._bookings;
+	}
+
+	get borrowedBooks() {
+		return this._borrowedBooks;
+	}
+
+	setBorrowedBooks(borrowedBooks: IBook[]): void {
+		this._borrowedBooks = [...this._borrowedBooks, ...borrowedBooks];
+	}
+
+	addBooks(books: IBook[]): void {
 		books.forEach((book) => {
-			this._books.push(book);
+			const index = this._books.findIndex(({ id }) => id === book.id);
+			if (index !== -1) {
+				console.log(`The book with id ${book.id} is already exists`);
+			} else {
+				this._books.push(book);
+				console.log(`The book with id ${book.id} was added successfully.`);
+			}
 		});
 	}
 
-	removeBooks(books: Book[]) {
+	removeBooks(books: IBook[]): void {
 		books.forEach((book) => {
-			const result = this._books.filter(
-				(currentBook) => currentBook.id !== book.id
+			const booksIndex = this._books.findIndex(({ id }) => id === book.id);
+			const borrowedBooksIndex = this._borrowedBooks.findIndex(
+				({ id }) => id === book.id
 			);
-			if (!result.length) {
-				throw new Error('No book to remove found');
+			if (booksIndex === -1) {
+				console.log(`The book with id ${book.id} was not found.`);
 			}
-			if (this._borrowedBooks.length) {
-				books.forEach((book) => {
-					this._borrowedBooks.forEach((borrowedBook) => {
-						if (borrowedBook.id === book.id) {
-							throw new Error('You cannot remove a borrowed book');
-						}
-					});
-				});
+			if (borrowedBooksIndex !== -1) {
+				console.log(
+					`The book with id ${book.id} is borrowed. It isn't possible to delete borrowed book.`
+				);
 			}
-			this._books = result;
+			if (booksIndex !== -1 && borrowedBooksIndex === -1) {
+				this._books.splice(booksIndex, 1);
+				console.log(`The book with id ${book.id} was removed successfully.`);
+			}
 		});
 	}
 
-	createBooking(user: LibraryUser, books: Book[]) {
+	createBooking(user: ILibraryUser, books: IBook[]): void {
+		// store here books what are not borrowed yet:
+		const nonBorrowedBooks: IBook[] = [];
+		// check what books are already borrowed:
 		books.forEach((book) => {
-			if (this._borrowedBooks.length) {
-				this._borrowedBooks.forEach((borrowedBook) => {
-					if (borrowedBook.id === book.id) {
-						// tu zamiast errora console.log
-						throw new Error('You cannot borrow book which is already borrowed');
-					}
-				});
+			const index = this._borrowedBooks.findIndex(({ id }) => id === book.id);
+			if (index !== -1) {
+				// console.log(`Book with id ${book.id} is already borrowed.`);
+			}
+			if (index === -1) {
+				nonBorrowedBooks.push(book);
+				// console.log(`Book with id ${book.id} was added to borrowedBooks successfully.`);
 			}
 		});
 		const booking = new Booking(user);
-		booking.borrowBooks(books);
+		// add non borrowed books to new booking:
+		booking.borrowBooks(nonBorrowedBooks);
 		this._bookings.push(booking);
+		// add non borrowed books to borrowed books array in the Library:
+		this._borrowedBooks = [...this._borrowedBooks, ...nonBorrowedBooks];
 	}
 
-	removeBooking(booking: Booking) {
-		// check if were books to remove:
-		const result = this._bookings.filter(
-			(currentBooking) => currentBooking.id !== booking.id
+	removeBooking(user: ILibraryUser, books: IBook[]): void {
+		const bookingsToRemove = this._bookings.filter(
+			(booking) => booking.user.id === user.id
 		);
-		if (!result.length) {
-			throw new Error('No booking to remove found');
+
+		if (!bookingsToRemove.length) {
+			console.log('No booking to remove found');
 		}
-		// remove books which are currently borrowed:
-		booking.borrowedBooks.forEach((book, i) => {
-			this._borrowedBooks.forEach((currentBook) => {
-				if (currentBook.id === book.id) {
-					this._borrowedBooks.splice(i, 1);
+
+		// remove books from every booking for specific user
+		books.forEach((book) => {
+			bookingsToRemove.forEach((bookingToRemove) => {
+				const index = bookingToRemove.borrowedBooks.findIndex(
+					({ id }) => id === book.id
+				);
+				// remove speficiv book:
+				if (index !== -1) {
+					bookingToRemove.borrowedBooks.splice(index, 1);
+					console.log(
+						`The book with id ${book.id} was removed from booking with id ${bookingToRemove.id}`
+					);
+				}
+				// remove booking if its current length is 0:
+				if (!bookingToRemove.borrowedBooks.length) {
+					const bookingIndex = this._bookings.findIndex(
+						({ id }) => id === bookingToRemove.id
+					);
+					this._bookings.splice(bookingIndex, 1);
 				}
 			});
 		});
-		this._bookings = result;
 	}
 }
 
@@ -109,6 +152,14 @@ const libraryUser1 = new LibraryUser('user1name', 'user1surname');
 const libraryUser2 = new LibraryUser('user2name', 'user2surname');
 
 const library = new Library();
-library.addBooks([book1, book2, book3, book4, book5]);
+// library.addBooks([book1, book2, book3, book4, book5]);
+// library.removeBooks([book1, book2, book3, book4]);
+// library.setBorrowedBooks([book1, book2, book3]);
+library.createBooking(libraryUser1, [book1, book4]);
+library.createBooking(libraryUser1, [book5]);
 
-console.log(library);
+console.log(library.bookings);
+
+library.removeBooking(libraryUser1, [book5]);
+
+console.log(library.bookings);
