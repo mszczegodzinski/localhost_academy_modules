@@ -65,17 +65,19 @@ class Library implements ILibrary {
 	}
 
 	createBooking(user: ILibraryUser, books: IBook[]): void {
-		// store here books what are not borrowed yet:
+		// books what are not borrowed yet:
 		const nonBorrowedBooks: IBook[] = [];
 		// check what books are already borrowed:
 		books.forEach((book) => {
 			const index = this._borrowedBooks.findIndex(({ id }) => id === book.id);
 			if (index !== -1) {
-				// console.log(`Book with id ${book.id} is already borrowed.`);
+				console.log(`Book with id ${book.id} is already borrowed.`);
 			}
 			if (index === -1) {
 				nonBorrowedBooks.push(book);
-				// console.log(`Book with id ${book.id} was added to borrowedBooks successfully.`);
+				console.log(
+					`Book with id ${book.id} was added to borrowedBooks successfully.`
+				);
 			}
 		});
 		const booking = new Booking(user);
