@@ -1,4 +1,5 @@
 import User from './User';
+import { WithID } from './userDef';
 
 const validateSimpleString = (simpleString: string): void => {
 	if (!simpleString.trim().length) {
@@ -65,6 +66,22 @@ const checkUserAccess = (userToModify: User, modifierUser: User) => {
 	}
 };
 
+const findIndexById = <T extends WithID>(element: T, list: T[]) => {
+	const index = list.findIndex((el) => element.id === el.id);
+	return index;
+};
+
+const findElementById = <T extends WithID>(element: T, list: T[]) => {
+	const result = list.find((el) => element.id === el.id);
+	return result;
+};
+
+const throwErrorOnCondition = (condition: number, message = 'Error') => {
+	if (condition === -1) {
+		throw new Error(message);
+	}
+};
+
 export type Gender = 'male' | 'female';
 export type UserType = 'regular' | 'admin';
 
@@ -75,6 +92,9 @@ const libraryHelpers = {
 	validateSimpleString,
 	checkUserAccess,
 	validateUserType,
+	findIndexById,
+	findElementById,
+	throwErrorOnCondition,
 };
 
 export default libraryHelpers;

@@ -1,6 +1,8 @@
-export interface IContact {
+export interface WithUUID {
 	readonly id: string;
-	readonly currentDate: Date;
+}
+
+export interface IContact extends WithUUID {
 	modificationDate: string;
 	readonly createDate: string;
 	name: string;
@@ -10,24 +12,21 @@ export interface IContact {
 	setName: (name: string) => void;
 	setSurname: (surname: string) => void;
 	containsPhrase: (phrase: string) => boolean;
-	findContactByEmailPhrase: (emailPhrase: string) => IContact | void;
 }
 
-export interface IGroup {
-	id: string;
+export interface IGroup extends WithUUID {
 	name: string;
 	contactList: IContact[];
 	addContact: (contact: IContact) => void;
 	removeContact: (contact: IContact) => void;
 	findContact: (phrase: string) => IContact[];
-	findGroupByName: (groupName: string) => IGroup | void;
 	containsPhrase: (phrase: string) => boolean;
 	setName: (name: string) => void;
 }
 
 export type Property = 'name' | 'surname' | 'email';
 
-export interface IAddressBookManageGroup {
+export interface IManageGroup {
 	groups: IGroup[];
 	removeGroup(group: IGroup): void;
 	addContactToGroup(group: IGroup, contact: IContact): void;
@@ -35,7 +34,7 @@ export interface IAddressBookManageGroup {
 	editGroupName(group: IGroup, name: string): void;
 }
 
-export interface IAddressBookManageContacts {
+export interface IManageContacts {
 	contacts: IContact[];
 	removeContact(contact: IContact): void;
 	editContact(contact: IContact, property: Property, propValue: string): void;

@@ -1,7 +1,10 @@
 export type Category = 'Category 1' | 'Category 2' | 'Category 3';
 
-export interface ICartItem {
-	id: string;
+export interface WithUUID {
+	readonly id: string;
+}
+
+export interface ICartItem extends WithUUID {
 	name: string;
 	category: Category;
 	price: number;
@@ -14,8 +17,7 @@ export interface ICartItem {
 	calculatePrice(): number;
 }
 
-export interface ICart {
-	readonly id: string;
+export interface ICart extends WithUUID {
 	items: ICartItem[];
 	discount: number;
 	discountCode: string;

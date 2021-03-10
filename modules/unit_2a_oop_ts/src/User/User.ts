@@ -54,10 +54,6 @@ class User implements IUser {
 		userHelpers.validatePassword(password);
 		this.password = password;
 	}
-
-	// get type() {
-	// 	return this._type;
-	// }
 }
 
 export default User;

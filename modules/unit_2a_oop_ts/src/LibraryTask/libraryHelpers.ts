@@ -1,3 +1,5 @@
+import { WithUUID } from './libraryDef';
+
 const validateSimpleString = (simpleString: string): void => {
 	if (!simpleString.trim().length) {
 		throw new Error('Incorrect data length. Length cannot be 0');
@@ -26,19 +28,45 @@ const generateRandomImagePath = () => {
 	return paths[pathIndex];
 };
 
-// const addDays = (date: Date, days: number): string => {
 const addDays = (date: Date, days: number): Date => {
 	const result = new Date(date);
 	result.setDate(result.getDate() + days);
-	// return result.toLocaleDateString();
 	return result;
+};
+
+const findElementById = <T extends WithUUID>(element: T, list: T[]) => {
+	const result = list.find((el) => element.id === el.id);
+	return result;
+};
+
+const findIndexById = <T extends WithUUID>(element: T, list: T[]) => {
+	const result = list.findIndex((el) => element.id === el.id);
+	return result;
+};
+
+const throwErrorOnFindCondition = (condition: number, message = 'Error') => {
+	if (condition === -1) {
+		throw new Error(message);
+	}
+};
+
+const throwErrorOnFindIndexCondition = (
+	condition: boolean,
+	message = 'Error'
+) => {
+	if (condition) {
+		throw new Error(message);
+	}
 };
 
 const libraryHelpers = {
 	validateSimpleString,
 	generateRandomImagePath,
-	// validateUuid,
 	addDays,
+	findElementById,
+	findIndexById,
+	throwErrorOnFindCondition,
+	throwErrorOnFindIndexCondition,
 };
 
 export default libraryHelpers;

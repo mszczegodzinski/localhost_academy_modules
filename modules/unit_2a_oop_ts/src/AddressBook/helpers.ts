@@ -1,4 +1,4 @@
-import Contact from "./Contact";
+import { WithUUID } from './addressBookDef';
 
 const validateSimpleString = (simpleString: string): void => {
 	if (!simpleString.trim().length) {
@@ -14,7 +14,7 @@ const validateSimpleString = (simpleString: string): void => {
 		);
 	}
 };
-  
+
 const validateEmail = (email: string): void => {
 	const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
@@ -26,17 +26,35 @@ const validateEmail = (email: string): void => {
 	}
 };
 
-const validateResult = <T>(result: T[]): void=> {
-  if (!result.length) {
-    throw new Error('No result found. Try again.');
-  }
+const validateResult = <T>(result: T[]): void => {
+	if (!result.length) {
+		throw new Error('No result found. Try again.');
+	}
+};
+
+const findIndexById = <T extends WithUUID>(element: T, list: T[]) => {
+	const index = list.findIndex((el) => element.id === el.id);
+	return index;
+};
+
+const findElementById = <T extends WithUUID>(element: T, list: T[]) => {
+	const result = list.find((el) => element.id === el.id);
+	return result;
+};
+
+const throwErrorOnCondition = (condition: boolean, message = 'Error') => {
+	if (condition) {
+		throw new Error(message);
+	}
 };
 
 const helpersFunc = {
 	validateSimpleString,
 	validateEmail,
-	validateResult
+	validateResult,
+	findIndexById,
+	findElementById,
+	throwErrorOnCondition,
 };
-  
-  export default helpersFunc;
-  
+
+export default helpersFunc;

@@ -1,44 +1,36 @@
 import User from './User';
 import userHelpers from './userHelpers';
-import { IUserApp } from './userDef';
+import { IUserApp, IUser } from './userDef';
 class UserApp implements IUserApp {
-	users: User[];
+	users: IUser[];
 
-	constructor(users: User[]) {
+	constructor(users: IUser[]) {
 		this.users = users;
 		// this.logs, history
 	}
 
 	changeUserPassword(
-		userToModify: User,
-		modifierUser: User,
+		userToModify: IUser,
+		modifierUser: IUser,
 		password: string
 	): void {
 		userHelpers.checkUserAccess(userToModify, modifierUser);
 		userHelpers.validatePassword(password);
-
-		const selectedIndex = this.users.findIndex(
-			(user) => user.id === userToModify.id
-		);
-
-		if (selectedIndex === -1) {
-			throw new Error('No user found');
-		}
+		const selectedIndex = userHelpers.findIndexById(userToModify, this.users);
+		userHelpers.throwErrorOnCondition(selectedIndex, 'No user found.');
 
 		this.users[selectedIndex].changePassword(password);
 	}
 
-	changeUserEmail(userToModify: User, modifierUser: User, email: string): void {
+	changeUserEmail(
+		userToModify: IUser,
+		modifierUser: IUser,
+		email: string
+	): void {
 		userHelpers.checkUserAccess(userToModify, modifierUser);
 		userHelpers.validateEmail(email);
-
-		const selectedIndex = this.users.findIndex(
-			(user) => user.id === userToModify.id
-		);
-
-		if (selectedIndex === -1) {
-			throw new Error('No user found');
-		}
+		const selectedIndex = userHelpers.findIndexById(userToModify, this.users);
+		userHelpers.throwErrorOnCondition(selectedIndex, 'No user found.');
 
 		this.users[selectedIndex].changeEmail(email);
 	}

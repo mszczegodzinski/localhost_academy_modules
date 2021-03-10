@@ -1,7 +1,9 @@
 import { Gender, UserType } from './userHelpers';
 
-export interface IUser {
-	id: number;
+export interface WithID {
+	readonly id: number;
+}
+export interface IUser extends WithID {
 	name: string;
 	surname: string;
 	birthDate: string;

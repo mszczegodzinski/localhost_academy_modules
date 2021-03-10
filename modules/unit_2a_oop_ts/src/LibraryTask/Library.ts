@@ -103,7 +103,7 @@ class Library implements ILibrary {
 				const index = bookingToRemove.borrowedBooks.findIndex(
 					({ id }) => id === book.id
 				);
-				// remove speficiv book:
+				// remove speficic book:
 				if (index !== -1) {
 					bookingToRemove.borrowedBooks.splice(index, 1);
 					console.log(

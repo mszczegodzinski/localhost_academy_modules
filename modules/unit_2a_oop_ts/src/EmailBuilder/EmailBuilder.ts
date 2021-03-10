@@ -65,7 +65,11 @@ class EmailBuilder implements IEmailBuilder {
 	}
 
 	build(): Email {
-		//zbedna walidacja w tym miejscu?
+		emailUtils.validateEmail(this.email.from);
+		emailUtils.validateEmails(this.email.to);
+		emailUtils.validateSimpleString(this.email.title);
+		emailUtils.validateHTML(this.email.html);
+
 		const email = new Email(
 			this.email.from,
 			this.email.to,

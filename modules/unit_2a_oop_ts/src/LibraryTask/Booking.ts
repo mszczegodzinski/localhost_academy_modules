@@ -79,10 +79,10 @@ class Booking implements IBooking {
 	): number {
 		let partFine = 0;
 		const oneDayInMilliSeconds = 1000 * 60 * 60 * 24;
+
 		if (currentReturnDate > plannedReturnDate) {
 			const delayInDays = (
-				(Date.parse(currentReturnDate.toString()) -
-					Date.parse(plannedReturnDate.toString())) /
+				(currentReturnDate.getTime() - plannedReturnDate.getTime()) /
 				oneDayInMilliSeconds
 			).toFixed(0);
 			partFine = parseInt(delayInDays) * this.dailyFine;

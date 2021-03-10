@@ -1,13 +1,14 @@
-export interface ILibraryUser {
+export interface WithUUID {
 	readonly id: string;
+}
+export interface ILibraryUser extends WithUUID {
 	name: string;
 	surname: string;
 	setName(name: string): void;
 	setSurname(surname: string): void;
 }
 
-export interface IBook {
-	readonly id: string;
+export interface IBook extends WithUUID {
 	readonly image: string;
 	title: string;
 	author: string;
@@ -17,8 +18,7 @@ export interface IBook {
 	setShortDescription(shortDescription: string): void;
 }
 
-export interface IBooking {
-	id: string;
+export interface IBooking extends WithUUID {
 	borrowingDate: string;
 	plannedReturnDate: Date;
 	dailyFine: number;

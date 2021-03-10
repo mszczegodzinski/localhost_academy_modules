@@ -3,6 +3,11 @@ import Contact from './Contact';
 import helpersFunc from './helpers';
 import { IContact, IGroup } from './addressBookDef';
 
+// abstracta
+// hermetyzacja - encapsulacja (public, private, protected)
+// dizeciczenie - A => A` (A + ...)
+// polimorfizm - A -> B (A + ...) C (A + ...)
+
 // Obiekt charakteryzujący grupę kontaktów:
 class Group implements IGroup {
 	// Ma mieć: listę kontaktów oraz nazwę grupy oraz uuid
@@ -19,21 +24,19 @@ class Group implements IGroup {
 	}
 
 	addContact(contact: IContact): void {
-		const index = this.contactList.findIndex(
-			(currentContact) => currentContact.id === contact.id
-		);
-		if (index !== -1) {
-			throw new Error('Contact with this id already exists');
-		}
+		const index = helpersFunc.findIndexById(contact, this.contactList);
+		const condition = index !== -1 ? true : false;
+		const message = 'Contact with this id already exists';
+		helpersFunc.throwErrorOnCondition(condition, message);
 		this.contactList.push(contact);
 	}
 
 	removeContact(contact: IContact): void {
-		const result = this.contactList.filter(
-			(currentContact) => currentContact.id !== contact.id
-		);
-		helpersFunc.validateResult(result);
-		this.contactList = result;
+		const index = helpersFunc.findIndexById(contact, this.contactList);
+		const condition = index === -1 ? true : false;
+		const message = 'No contact to remove found.';
+		helpersFunc.throwErrorOnCondition(condition, message);
+		this.contactList.splice(index, 1);
 	}
 
 	findContact(phrase: string): IContact[] {
@@ -44,20 +47,12 @@ class Group implements IGroup {
 		return result;
 	}
 
-	// private?
 	containsPhrase(phrase: string): boolean {
 		helpersFunc.validateSimpleString(phrase);
 		const phraseRegex = new RegExp(phrase, 'gi');
 		const name = this.name;
 		const groupContainsPhrase = phraseRegex.test(name);
 		return groupContainsPhrase;
-	}
-
-	findGroupByName(groupName: string): Group | void {
-		if (this.containsPhrase(groupName)) {
-			return this;
-		}
-		console.log('No group found');
 	}
 
 	setName(name: string): void {

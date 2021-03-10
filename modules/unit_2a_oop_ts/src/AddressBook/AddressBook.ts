@@ -2,16 +2,15 @@ import Group from './Group';
 import Contact from './Contact';
 import helpersFunc from './helpers';
 import {
-	IAddressBookManageContacts,
-	IAddressBookManageGroup,
+	IManageContacts,
+	IManageGroup,
 	IContact,
 	IGroup,
 	Property,
 } from './addressBookDef';
 
 // Obiekt charakteryzujący książke adresową
-class AddressBook
-	implements IAddressBookManageContacts, IAddressBookManageGroup {
+class AddressBook implements IManageContacts, IManageGroup {
 	// Ma mieć: listę wszystkich kontaktów, listę grup kontaktów
 	// Ma umożliwiać: szukanie kontaktu po frazie, dodawanie/usuwanie/modyfikacje nowych kontaktów, dodawanie/usuwanie/modyfikacje nowych grup
 	private _groups: IGroup[];
@@ -31,27 +30,29 @@ class AddressBook
 	}
 
 	removeGroup(group: IGroup): void {
-		const index = this._groups.findIndex(({ id }) => id === group.id);
-		if (index === -1) {
-			throw new Error('No group to remove');
-		}
+		const index = helpersFunc.findIndexById(group, this._groups);
+		const condition = index === -1 ? true : false;
+		const message = 'No group to remove';
+		helpersFunc.throwErrorOnCondition(condition, message);
+
 		this._groups.splice(index, 1);
 	}
 
 	removeContact(contact: IContact): void {
-		const index = this._contacts.findIndex(({ id }) => id === contact.id);
-		if (index === -1) {
-			throw new Error('No contact to remove');
-		}
+		const index = helpersFunc.findIndexById(contact, this._contacts);
+		const condition = index === -1 ? true : false;
+		const message = 'No contact to remove';
+		helpersFunc.throwErrorOnCondition(condition, message);
+
 		this._contacts.splice(index, 1);
 	}
 
 	addContactToGroup(group: IGroup, contact: IContact): void {
-		const result = this._groups.find(({ id }) => id === group.id);
-		if (!result) {
-			throw new Error("This group doesn't exist in the Address Book yet");
-		}
-		result.addContact(contact);
+		// const result = this._groups.find(({ id }) => id === group.id);
+		const result = helpersFunc.findElementById(group, this._groups);
+		const message = "This group doesn't exist in the Address Book yet";
+		helpersFunc.throwErrorOnCondition(!result, message);
+		result!.addContact(contact);
 	}
 
 	editContact(contact: IContact, property: Property, propValue: string): void {
@@ -74,7 +75,7 @@ class AddressBook
 	}
 
 	addGroupToAddressBook(newGroup: IGroup): void {
-		const result = this._groups.findIndex(({ id }) => id === newGroup.id);
+		const result = helpersFunc.findIndexById(newGroup, this._groups);
 		if (result !== -1) {
 			throw new Error('This group is already in the Address Book');
 		}
@@ -83,7 +84,7 @@ class AddressBook
 
 	editGroupName(group: IGroup, name: string): void {
 		helpersFunc.validateSimpleString(name);
-		const result = this._groups.find(({ id }) => id === group.id);
+		const result = helpersFunc.findElementById(group, this._groups);
 		if (!result) {
 			console.log('No group found');
 		}
